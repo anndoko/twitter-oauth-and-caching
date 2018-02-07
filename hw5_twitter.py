@@ -39,6 +39,14 @@ response = requests.get(baseurl, params = params, auth = auth)
 results = json.loads(response.text)
 # print(results)
 
+## Step 2. Write the results to tweets.json
+results_file = "tweets.json"
+
+f = open(results_file, "w")
+json_string = json.dumps(results, indent = 2)
+f.write(json_string)
+f.close()
+
 #Code for Part 2:Analyze Tweets
 
 
