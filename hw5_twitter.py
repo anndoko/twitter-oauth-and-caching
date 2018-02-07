@@ -3,7 +3,8 @@ import json
 import sys
 import requests
 import secret_data # file that contains OAuth credentials
-# import nltk # uncomment line after you install nltk
+import nltk # uncomment line after you install nltk
+import ssl
 
 ## SI 206 - HW
 ## COMMENT WITH:
@@ -20,16 +21,23 @@ access_token = secret_data.ACCESS_KEY
 access_secret = secret_data.ACCESS_SECRET
 
 #Code for OAuth starts
-url = 'https://api.twitter.com/1.1/account/verify_credentials.json'
+url = "https://api.twitter.com/1.1/account/verify_credentials.json"
 auth = OAuth1(consumer_key, consumer_secret, access_token, access_secret)
-requests.get(url, auth=auth)
+requests.get(url, auth = auth)
 #Code for OAuth ends
 
 #Write your code below:
 #Code for Part 3:Caching
 #Finish parts 1 and 2 and then come back to this
 
-#Code for Part 1:Get Tweets
+#Code for Part 1: Get Tweets
+## Step 1. Get user tweets
+baseurl = "https://api.twitter.com/1.1/statuses/user_timeline.json"
+params = { "screen_name": username, "count": num_tweets}
+
+response = requests.get(baseurl, params = params, auth = auth)
+results = json.loads(response.text)
+# print(results)
 
 #Code for Part 2:Analyze Tweets
 
