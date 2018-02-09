@@ -23,11 +23,12 @@ access_secret = secret_data.ACCESS_SECRET
 #Code for OAuth starts
 url = "https://api.twitter.com/1.1/account/verify_credentials.json"
 auth = OAuth1(consumer_key, consumer_secret, access_token, access_secret)
+# print(type(auth)) # return an object
 requests.get(url, auth = auth)
 #Code for OAuth ends
 
 #Write your code below:
-#Code for Part 3:Caching
+#Code for Part 3: Caching
 #Finish parts 1 and 2 and then come back to this
 
 #Code for Part 1: Get Tweets
@@ -37,17 +38,21 @@ params = { "screen_name": username, "count": num_tweets}
 
 response = requests.get(baseurl, params = params, auth = auth)
 results = json.loads(response.text)
-# print(results)
+json_dic = {}
+json_dic["statuses"] = results
 
 ## Step 2. Write the results to tweets.json
 results_file = "tweets.json"
 
 f = open(results_file, "w")
-json_string = json.dumps(results, indent = 2)
+json_string = json.dumps(json_dic, indent = 2)
 f.write(json_string)
 f.close()
 
-#Code for Part 2:Analyze Tweets
+#Code for Part 2: Analyze Tweets
+## Step 1.
+
+## Step 2.
 
 
 
