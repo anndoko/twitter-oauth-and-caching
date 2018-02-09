@@ -23,7 +23,6 @@ access_secret = secret_data.ACCESS_SECRET
 #Code for OAuth starts
 url = "https://api.twitter.com/1.1/account/verify_credentials.json"
 auth = OAuth1(consumer_key, consumer_secret, access_token, access_secret)
-# print(type(auth)) # return an object
 requests.get(url, auth = auth)
 #Code for OAuth ends
 
@@ -32,29 +31,61 @@ requests.get(url, auth = auth)
 #Finish parts 1 and 2 and then come back to this
 
 #Code for Part 1: Get Tweets
-## Step 1. Get user tweets
+## set up the url and params for requesting data
 baseurl = "https://api.twitter.com/1.1/statuses/user_timeline.json"
-params = { "screen_name": username, "count": num_tweets}
+params = {
+    "screen_name": username,
+    "count": num_tweets
+    }
+## request data
+response = requests.get(baseurl, params = params, auth = auth) # request the data
+results_lst = json.loads(response.text) # results_lst is a list of dictions (tweets)
+results_dic = {} # create a diction to store the results_lst
+results_dic["statuses"] = results_lst
 
-response = requests.get(baseurl, params = params, auth = auth)
-results = json.loads(response.text)
-json_dic = {}
-json_dic["statuses"] = results
-
-## Step 2. Write the results to tweets.json
-results_file = "tweets.json"
-
-f = open(results_file, "w")
-json_string = json.dumps(json_dic, indent = 2)
-f.write(json_string)
-f.close()
+## write the data in a file
+results_file = "tweets.json" # file name: tweets.json
+f = open(results_file, "w") # open the file
+json_string = json.dumps(results_dic, indent = 2) # convert the python dic into a json string
+f.write(json_string) # write the json string into the file
+f.close() # close the file
 
 #Code for Part 2: Analyze Tweets
-## Step 1.
 
-## Step 2.
+## tokenize words in each tweet & get a frequency distribution
+for tweet in results_dic["statuses"]:
+    tokenized_text = nltk.word_tokenize(tweet["text"]) # tokenize the words in the tweet
+    words_dic = nltk.FreqDist(tokenized_text) # get a frequency distribution of the tokenized list
 
 
+real_words_lst = [] # create a list to store real words:
+ignore_lst = ["http", "https", "RT"] # create a list of words that should be ignored
+
+## go through each tweet & add real words to real_words_lst
+for tweet in results_dic["statuses"]:
+    tokenized_text = nltk.word_tokenize(tweet["text"]) # tokenize the words in the tweet
+
+    # iterate through each word in tokenized_text & filter out the word if it's a stop word
+    for word in tokenized_text:
+        # check if the word starts with an alphabetic character [a-zA-Z]
+        # check if the word is not in the ignore_lst
+        if word[0].isalpha() and word not in ignore_lst:
+            real_words_lst.append(word) # add the word to real_words_lst
+        # else:
+        #     print("Not a word: " + str(word))
+        #     continue
+
+## calcuate frequency distribution on real words
+real_words_dic = nltk.FreqDist(real_words_lst)
+
+## sort the words by their frequency
+sorted_real_words_freq = sorted(real_words_dic.items(), key = lambda x: x[1], reverse = True)
+
+## print the 5 most common words
+print("THE 5 MOST FREQUENTLY USED WORDS:")
+for word_freq_tuple in sorted_real_words_freq[0:5]:
+    word, frequency = word_freq_tuple # unpack the tuple
+    print(word, ":", frequency, "times")
 
 if __name__ == "__main__":
     if not consumer_key or not consumer_secret:
